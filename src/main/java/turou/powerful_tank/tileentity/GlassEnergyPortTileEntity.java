@@ -8,6 +8,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import org.apache.logging.log4j.Level;
 import turou.powerful_tank.PowerfulTank;
 import turou.powerful_tank.multiblock.MultiblockTank;
 
@@ -51,10 +52,8 @@ public class GlassEnergyPortTileEntity extends AbstractCuboidMultiblockPart<Mult
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == CapabilityEnergy.ENERGY) {
-            getMultiblockController().ifPresent((controller) ->
-                    LazyOptional.of(() -> getMultiblockController().get().energyStorage).cast()
-            );
+        if (cap == CapabilityEnergy.ENERGY && getMultiblockController().isPresent()) {
+            return LazyOptional.of(() -> getMultiblockController().get().energyStorage).cast();
         }
         return super.getCapability(cap, side);
     }

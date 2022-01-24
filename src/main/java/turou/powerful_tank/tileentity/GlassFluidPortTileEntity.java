@@ -51,10 +51,8 @@ public class GlassFluidPortTileEntity extends AbstractCuboidMultiblockPart<Multi
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            getMultiblockController().ifPresent((controller) ->
-                    LazyOptional.of(() -> getMultiblockController().get().fluidTank).cast()
-            );
+        if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && getMultiblockController().isPresent()) {
+            return LazyOptional.of(() -> getMultiblockController().get().fluidTank).cast();
         }
         return super.getCapability(cap, side);
     }

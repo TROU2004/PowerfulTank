@@ -44,7 +44,6 @@ public class GlassFluidPortBlock extends AbstractGlassBlock {
                 if (port.getMultiblockController().isPresent()) {
                     pPlayer.sendMessage(port.getMultiblockController().get().getLastError().get().getChatMessage(), UUID.randomUUID());
                 }
-
             }
         }
         return super.use(pState, pLevel, pPos, pPlayer, pHand, pHit);
