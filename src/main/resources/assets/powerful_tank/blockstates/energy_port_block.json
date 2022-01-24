@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "powerful_tank:block/energy_port_block" }
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "block.powerful_tank.fluid_port_block": "储罐流体接口",
+  "block.powerful_tank.energy_port_block": "储罐能量接口",
+  "block.powerful_tank.wall_block": "储罐玻璃外壳"
+}
