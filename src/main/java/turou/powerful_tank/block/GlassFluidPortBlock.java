@@ -11,12 +11,14 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import turou.powerful_tank.PowerfulTank;
 import turou.powerful_tank.tileentity.GlassFluidPortTileEntity;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.UUID;
 
 public class GlassFluidPortBlock extends AbstractGlassBlock {
     public GlassFluidPortBlock() {
@@ -35,15 +37,14 @@ public class GlassFluidPortBlock extends AbstractGlassBlock {
         return new GlassFluidPortTileEntity();
     }
 
+    @Nonnull
     @Override
-    public ActionResultType use(BlockState pState, World pLevel, BlockPos pPos, PlayerEntity pPlayer, Hand pHand, BlockRayTraceResult pHit) {
+    public ActionResultType use(@Nonnull BlockState pState, World pLevel, @Nonnull BlockPos pPos, @Nonnull PlayerEntity pPlayer, @Nonnull Hand pHand, @Nonnull BlockRayTraceResult pHit) {
         if (!pLevel.isClientSide && pHand == Hand.MAIN_HAND) {
-            TileEntity te = pLevel.getBlockEntity(pPos);
-            if (te instanceof GlassFluidPortTileEntity) {
-                GlassFluidPortTileEntity port = (GlassFluidPortTileEntity) te;
-                if (port.getMultiblockController().isPresent()) {
-                    pPlayer.sendMessage(port.getMultiblockController().get().getLastError().get().getChatMessage(), UUID.randomUUID());
-                }
+            GlassFluidPortTileEntity te = (GlassFluidPortTileEntity) pLevel.getBlockEntity(pPos);
+            if (te != null && te.isMachineAssembled()) {
+                pPlayer.sendMessage(new StringTextComponent(te.getFluidText()), PowerfulTank.POWERFUL_TANK_UUID);
+                return ActionResultType.SUCCESS;
             }
         }
         return super.use(pState, pLevel, pPos, pPlayer, pHand, pHit);

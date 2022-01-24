@@ -9,13 +9,16 @@ import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.EnergyStorage;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 import javax.annotation.Nonnull;
 
 public class MultiblockTank extends AbstractCuboidMultiblockController<MultiblockTank> {
+    public static final int ENERGY_CAPACITY = 2_500_000;
+
     public FluidTank fluidTank = new FluidTank(Integer.MAX_VALUE);
-    public EnergyStorage energyStorage = new EnergyStorage(2_500_000, 2_500_000, 0);
+    public EnergyStorage energyStorage = new EnergyStorage(ENERGY_CAPACITY, 2_500_000, 0);
 
     public MultiblockTank(World world) {
         super(world);
@@ -48,7 +51,7 @@ public class MultiblockTank extends AbstractCuboidMultiblockController<Multibloc
 
     @Override
     protected int getMinimumNumberOfPartsForAssembledMachine() {
-        return 2;
+        return 26;
     }
 
     @Override
@@ -93,7 +96,11 @@ public class MultiblockTank extends AbstractCuboidMultiblockController<Multibloc
 
     @Override
     protected boolean updateServer() {
-        return false;
+        energyStorage.extractEnergy(getCost(), false);
+        if (energyStorage.getEnergyStored() == 0 && fluidTank.getFluidAmount() != 0) {
+            fluidTank.setFluid(FluidStack.EMPTY);
+        }
+        return true;
     }
 
     @Override
@@ -103,26 +110,30 @@ public class MultiblockTank extends AbstractCuboidMultiblockController<Multibloc
 
     @Override
     protected boolean isBlockGoodForFrame(@Nonnull World world, int i, int i1, int i2, @Nonnull IMultiblockValidator iMultiblockValidator) {
-        return world.getBlockState(new BlockPos(i, i1, i2)).getBlock() instanceof AbstractGlassBlock;
+        return false;
     }
 
     @Override
     protected boolean isBlockGoodForTop(@Nonnull World world, int i, int i1, int i2, @Nonnull IMultiblockValidator iMultiblockValidator) {
-        return world.getBlockState(new BlockPos(i, i1, i2)).getBlock() instanceof AbstractGlassBlock;
+        return false;
     }
 
     @Override
     protected boolean isBlockGoodForBottom(@Nonnull World world, int i, int i1, int i2, @Nonnull IMultiblockValidator iMultiblockValidator) {
-        return world.getBlockState(new BlockPos(i, i1, i2)).getBlock() instanceof AbstractGlassBlock;
+        return false;
     }
 
     @Override
     protected boolean isBlockGoodForSides(@Nonnull World world, int i, int i1, int i2, @Nonnull IMultiblockValidator iMultiblockValidator) {
-        return world.getBlockState(new BlockPos(i, i1, i2)).getBlock() instanceof AbstractGlassBlock;
+        return false;
     }
 
     @Override
     protected boolean isBlockGoodForInterior(@Nonnull World world, int i, int i1, int i2, @Nonnull IMultiblockValidator iMultiblockValidator) {
-        return world.getBlockState(new BlockPos(i, i1, i2)).is(Blocks.AIR);
+        return false;
+    }
+
+    public int getCost() {
+        return (int) Math.pow(fluidTank.getFluidAmount() / 1000.0, 0.8);
     }
 }

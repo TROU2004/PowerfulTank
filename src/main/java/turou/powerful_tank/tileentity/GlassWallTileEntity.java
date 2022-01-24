@@ -10,12 +10,12 @@ import javax.annotation.Nonnull;
 
 public class GlassWallTileEntity extends AbstractCuboidMultiblockPart<MultiblockTank> {
     public GlassWallTileEntity() {
-        super(PowerfulTank.RegistryEvents.TILE_ENTITY_TYPE_FLUID_PORT);
+        super(PowerfulTank.RegistryEvents.TILE_ENTITY_TYPE_WALL);
     }
 
     @Override
     public boolean isGoodForPosition(@Nonnull PartPosition partPosition, @Nonnull IMultiblockValidator iMultiblockValidator) {
-        return true;
+        return partPosition.getType() != PartPosition.Type.Interior;
     }
 
     @Nonnull

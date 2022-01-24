@@ -21,9 +21,12 @@ import turou.powerful_tank.tileentity.GlassEnergyPortTileEntity;
 import turou.powerful_tank.tileentity.GlassFluidPortTileEntity;
 import turou.powerful_tank.tileentity.GlassWallTileEntity;
 
+import java.util.UUID;
+
 @Mod("powerful_tank")
 public class PowerfulTank {
     public static final Logger LOGGER = LogManager.getLogger();
+    public static final UUID POWERFUL_TANK_UUID = UUID.fromString("10D4F60E-61F0-3E41-5BAF-56CE4B68145C");
 
     @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
     public static class RegistryEvents {

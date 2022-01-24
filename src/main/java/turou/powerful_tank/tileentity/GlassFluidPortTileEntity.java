@@ -6,8 +6,8 @@ import it.zerono.mods.zerocore.lib.multiblock.validation.IMultiblockValidator;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
 import turou.powerful_tank.PowerfulTank;
 import turou.powerful_tank.multiblock.MultiblockTank;
 
@@ -23,7 +23,7 @@ public class GlassFluidPortTileEntity extends AbstractCuboidMultiblockPart<Multi
 
     @Override
     public boolean isGoodForPosition(@Nonnull PartPosition partPosition, @Nonnull IMultiblockValidator iMultiblockValidator) {
-        return true;
+        return partPosition.getType() != PartPosition.Type.Interior;
     }
 
     @Nonnull
@@ -48,12 +48,24 @@ public class GlassFluidPortTileEntity extends AbstractCuboidMultiblockPart<Multi
 
     }
 
+
+
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && getMultiblockController().isPresent()) {
+        if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && getMultiblockController().isPresent() && isMachineAssembled()) {
             return LazyOptional.of(() -> getMultiblockController().get().fluidTank).cast();
         }
         return super.getCapability(cap, side);
+    }
+
+    public String getFluidText() {
+        FluidStack fluidStack = FluidStack.EMPTY;
+        int cost = 0;
+        if (getMultiblockController().isPresent() && isMachineAssembled()) {
+            fluidStack = getMultiblockController().get().fluidTank.getFluid();
+            cost = getMultiblockController().get().getCost();
+        }
+        return String.format("Fluid(%s): %d / %s mb, Cost: %d FE/t", Objects.requireNonNull(fluidStack.getFluid().getRegistryName()).toString(), fluidStack.getAmount(), "INFINITE", cost);
     }
 }
