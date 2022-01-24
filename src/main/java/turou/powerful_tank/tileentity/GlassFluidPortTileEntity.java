@@ -3,6 +3,7 @@ package turou.powerful_tank.tileentity;
 import it.zerono.mods.zerocore.lib.multiblock.cuboid.AbstractCuboidMultiblockPart;
 import it.zerono.mods.zerocore.lib.multiblock.cuboid.PartPosition;
 import it.zerono.mods.zerocore.lib.multiblock.validation.IMultiblockValidator;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -11,6 +12,7 @@ import turou.powerful_tank.PowerfulTank;
 import turou.powerful_tank.multiblock.MultiblockTank;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class GlassFluidPortTileEntity extends AbstractCuboidMultiblockPart<MultiblockTank> {
@@ -48,8 +50,12 @@ public class GlassFluidPortTileEntity extends AbstractCuboidMultiblockPart<Multi
 
     @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap) {
-        boolean isEnergy = Objects.equals(cap, CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
-        return isEnergy ? LazyOptional.of(() -> getMultiblockController().get().fluidTank).cast() : super.getCapability(cap);
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+        if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            getMultiblockController().ifPresent((controller) ->
+                    LazyOptional.of(() -> getMultiblockController().get().fluidTank).cast()
+            );
+        }
+        return super.getCapability(cap, side);
     }
 }
