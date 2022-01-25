@@ -15,7 +15,7 @@ public class GlassWallTileEntity extends AbstractCuboidMultiblockPart<Multiblock
 
     @Override
     public boolean isGoodForPosition(@Nonnull PartPosition partPosition, @Nonnull IMultiblockValidator iMultiblockValidator) {
-        return partPosition.getType() != PartPosition.Type.Interior;
+        return partPosition != PartPosition.Interior;
     }
 
     @Nonnull

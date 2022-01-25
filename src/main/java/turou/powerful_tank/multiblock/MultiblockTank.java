@@ -1,24 +1,31 @@
 package turou.powerful_tank.multiblock;
 
+import it.zerono.mods.zerocore.lib.energy.IWideEnergyProvider;
 import it.zerono.mods.zerocore.lib.multiblock.IMultiblockController;
 import it.zerono.mods.zerocore.lib.multiblock.IMultiblockPart;
 import it.zerono.mods.zerocore.lib.multiblock.cuboid.AbstractCuboidMultiblockController;
+import it.zerono.mods.zerocore.lib.multiblock.cuboid.AbstractCuboidMultiblockPart;
 import it.zerono.mods.zerocore.lib.multiblock.validation.IMultiblockValidator;
 import net.minecraft.block.AbstractGlassBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.material.Material;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+import turou.powerful_tank.tileentity.GlassEnergyPortTileEntity;
+import turou.powerful_tank.tileentity.GlassFluidPortTileEntity;
 
 import javax.annotation.Nonnull;
 
 public class MultiblockTank extends AbstractCuboidMultiblockController<MultiblockTank> {
-    public static final int ENERGY_CAPACITY = 2_500_000;
 
-    public FluidTank fluidTank = new FluidTank(Integer.MAX_VALUE);
-    public EnergyStorage energyStorage = new EnergyStorage(ENERGY_CAPACITY, 2_500_000, 0);
+    private EnergyStorage energyStorage;
+    private FluidTank fluidTank;
 
     public MultiblockTank(World world) {
         super(world);
@@ -36,7 +43,12 @@ public class MultiblockTank extends AbstractCuboidMultiblockController<Multibloc
 
     @Override
     protected void onMachineRestored() {
+        findPorts();
+    }
 
+    @Override
+    protected void onMachineAssembled() {
+        findPorts();
     }
 
     @Override
@@ -96,11 +108,14 @@ public class MultiblockTank extends AbstractCuboidMultiblockController<Multibloc
 
     @Override
     protected boolean updateServer() {
-        energyStorage.extractEnergy(getCost(), false);
-        if (energyStorage.getEnergyStored() == 0 && fluidTank.getFluidAmount() != 0) {
-            fluidTank.setFluid(FluidStack.EMPTY);
+        if (energyStorage != null && fluidTank != null) {
+            if (energyStorage.getEnergyStored() > 0) energyStorage.extractEnergy(getCost(), false);
+            if (energyStorage.getEnergyStored() == 0 && fluidTank.getFluidAmount() != 0) {
+                fluidTank.setFluid(FluidStack.EMPTY);
+            }
+            return true;
         }
-        return true;
+        return false;
     }
 
     @Override
@@ -129,11 +144,27 @@ public class MultiblockTank extends AbstractCuboidMultiblockController<Multibloc
     }
 
     @Override
+    protected boolean isMachineWhole(IMultiblockValidator validatorCallback) {
+        findPorts();
+        if (energyStorage != null && fluidTank != null)
+            return super.isMachineWhole(validatorCallback);
+        else
+            return false;
+    }
+
+    @Override
     protected boolean isBlockGoodForInterior(@Nonnull World world, int i, int i1, int i2, @Nonnull IMultiblockValidator iMultiblockValidator) {
-        return false;
+        return world.getBlockState(new BlockPos(i, i1, i2)).getMaterial() == Material.AIR;
     }
 
     public int getCost() {
         return (int) Math.pow(fluidTank.getFluidAmount() / 1000.0, 0.8);
+    }
+
+    private void findPorts() {
+        for (IMultiblockPart<MultiblockTank> connectedPart : _connectedParts) {
+            if (connectedPart instanceof GlassEnergyPortTileEntity) energyStorage = ((GlassEnergyPortTileEntity) connectedPart).energyStorage;
+            if (connectedPart instanceof GlassFluidPortTileEntity) fluidTank = ((GlassFluidPortTileEntity) connectedPart).fluidTank;
+        }
     }
 }

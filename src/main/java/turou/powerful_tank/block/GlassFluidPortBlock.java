@@ -14,6 +14,8 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
 import turou.powerful_tank.PowerfulTank;
 import turou.powerful_tank.tileentity.GlassFluidPortTileEntity;
 
@@ -21,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class GlassFluidPortBlock extends AbstractGlassBlock {
+
     public GlassFluidPortBlock() {
         super(Properties.of(Material.GLASS, MaterialColor.NONE).noOcclusion());
         this.setRegistryName("powerful_tank", "fluid_port_block");
