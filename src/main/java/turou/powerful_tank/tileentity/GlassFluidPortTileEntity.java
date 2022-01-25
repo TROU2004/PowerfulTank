@@ -16,11 +16,10 @@ import turou.powerful_tank.multiblock.MultiblockTank;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Objects;
 
 public class GlassFluidPortTileEntity extends AbstractCuboidMultiblockPart<MultiblockTank> {
 
-    public final FluidTank fluidTank = new FluidTank(Integer.MAX_VALUE){
+    public final FluidTank fluidTank = new FluidTank(Integer.MAX_VALUE) {
         @Override
         public int fill(FluidStack resource, FluidAction action) {
             return super.fill(GlassFluidPortTileEntity.this.isMachineAssembled() ? resource : FluidStack.EMPTY, action);

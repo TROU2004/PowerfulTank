@@ -1,17 +1,10 @@
 package turou.powerful_tank.multiblock;
 
-import it.zerono.mods.zerocore.lib.energy.IWideEnergyProvider;
 import it.zerono.mods.zerocore.lib.multiblock.IMultiblockController;
 import it.zerono.mods.zerocore.lib.multiblock.IMultiblockPart;
 import it.zerono.mods.zerocore.lib.multiblock.cuboid.AbstractCuboidMultiblockController;
-import it.zerono.mods.zerocore.lib.multiblock.cuboid.AbstractCuboidMultiblockPart;
 import it.zerono.mods.zerocore.lib.multiblock.validation.IMultiblockValidator;
-import net.minecraft.block.AbstractGlassBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.EnergyStorage;
@@ -144,7 +137,7 @@ public class MultiblockTank extends AbstractCuboidMultiblockController<Multibloc
     }
 
     @Override
-    protected boolean isMachineWhole(IMultiblockValidator validatorCallback) {
+    protected boolean isMachineWhole(@Nonnull IMultiblockValidator validatorCallback) {
         findPorts();
         if (energyStorage != null && fluidTank != null)
             return super.isMachineWhole(validatorCallback);
@@ -163,8 +156,12 @@ public class MultiblockTank extends AbstractCuboidMultiblockController<Multibloc
 
     private void findPorts() {
         for (IMultiblockPart<MultiblockTank> connectedPart : _connectedParts) {
-            if (connectedPart instanceof GlassEnergyPortTileEntity) energyStorage = ((GlassEnergyPortTileEntity) connectedPart).energyStorage;
-            if (connectedPart instanceof GlassFluidPortTileEntity) fluidTank = ((GlassFluidPortTileEntity) connectedPart).fluidTank;
+            energyStorage = null;
+            fluidTank = null;
+            if (connectedPart instanceof GlassEnergyPortTileEntity)
+                energyStorage = ((GlassEnergyPortTileEntity) connectedPart).energyStorage;
+            if (connectedPart instanceof GlassFluidPortTileEntity)
+                fluidTank = ((GlassFluidPortTileEntity) connectedPart).fluidTank;
         }
     }
 }
